@@ -1,0 +1,92 @@
+class Flight:
+    def __init__(self, flight_number, origin, destination, departure_time, arrival_time, economy_seats, business_seats, economy_price, business_price):
+        self.flight_number = flight_number
+        self.origin = origin
+        self.destination = destination
+        self.departure_time = departure_time
+        self.arrival_time = arrival_time
+        self.economy_seats = economy_seats
+        self.business_seats = business_seats
+        self.economy_price = economy_price
+        self.business_price = business_price
+        self.available_economy_seats = list(range(1, economy_seats + 1))
+        self.available_business_seats = list(range(1, business_seats + 1))
+class BookingSystem:
+    def __init__(self):
+        self.flights = []
+
+    def add_flight(self, flight):
+        self.flights.append(flight)
+
+    def search_flights(self, origin, destination):
+        available_flights = []
+        for flight in self.flights:
+            if flight.origin.lower() == origin.lower() and flight.destination.lower() == destination.lower():
+                available_flights.append(flight)
+        return available_flights
+
+    def book_flight(self, flight, passenger_name, seat_class):
+        if seat_class.lower() == 'economy':
+            if flight.available_economy_seats:
+                seat_number = flight.available_economy_seats.pop(0)
+                print(f"Booking confirmed for {passenger_name} in Economy class on flight {flight.flight_number} from {flight.origin} to {flight.destination} departing at {flight.departure_time} and arriving at {flight.arrival_time}.")
+                print(f"Seat Number: {seat_number}")
+                print(f"Total price: ${flight.economy_price}")
+            else:
+                print("Sorry, there are no available Economy class seats on this flight.")
+        elif seat_class.lower() == 'business':
+            if flight.available_business_seats:
+                seat_number = flight.available_business_seats.pop(0)
+                print(f"Booking confirmed for {passenger_name} in Business class on flight {flight.flight_number} from {flight.origin} to {flight.destination} departing at {flight.departure_time} and arriving at {flight.arrival_time}.")
+                print(f"Seat Number: {seat_number}")
+                print(f"Total price: ${flight.business_price}")
+            else:
+                print("Sorry, there are no available Business class seats on this flight.")
+        else:
+            print("Invalid seat class. Please choose either 'Economy' or 'Business'.")
+
+# Create a BookingSystem instance
+booking_system = BookingSystem()
+
+# Add sample flights
+booking_system.add_flight(Flight("AI101", "Delhi", "Mumbai", "08:00", "10:30", 150, 30, 500, 1000))
+booking_system.add_flight(Flight("AI102", "Mumbai", "Delhi", "11:00", "13:30", 200, 40, 400, 900))
+booking_system.add_flight(Flight("AI103", "Kolkata", "Chennai", "12:00", "15:00", 180, 35, 600, 1100))
+booking_system.add_flight(Flight("AI104", "Chennai", "Kolkata", "13:00", "16:00", 200, 30, 700, 1200))
+booking_system.add_flight(Flight("AI105", "Bangalore", "Hyderabad", "14:00", "15:30", 180, 25, 550, 1050))
+booking_system.add_flight(Flight("AI106", "Hyderabad", "Bangalore", "16:00", "17:30", 200, 20, 650, 1250))
+
+#main function
+print("Welcome to the Flight Booking System")
+while True:
+    print("\nOptions:")
+    print("1. Search Flights")
+    print("2. Exit")
+    choice = input("Enter your choice: ")
+
+    if choice == '1':
+        origin = input("Enter origin: ")
+        destination = input("Enter destination: ")
+
+        available_flights = booking_system.search_flights(origin, destination)
+        if available_flights:
+            print("\nAvailable Flights:")
+            for i, flight in enumerate(available_flights, 1):
+                print(f"{i}. {flight.flight_number} - Departure: {flight.departure_time}, Arrival: {flight.arrival_time}")
+                print(f"   Economy Seats: {len(flight.available_economy_seats)} - Price: ${flight.economy_price}")
+                print(f"   Business Seats: {len(flight.available_business_seats)} - Price: ${flight.business_price}")
+
+            flight_choice = int(input("Enter the number of the flight to book: ")) - 1
+            if 0 <= flight_choice < len(available_flights):
+                passenger_name = input("Enter your name: ")
+                seat_class = input("Enter seat class (Economy/Business): ")
+                booking_system.book_flight(available_flights[flight_choice], passenger_name, seat_class)
+            else:
+                print("Invalid flight choice. Please try again.")
+        else:
+            print("No flights available for the given route.")
+    elif choice == '2':
+        print("Thank you for using the Flight Booking System.")
+        break
+    else:
+        print("Invalid choice. Please try again.")
